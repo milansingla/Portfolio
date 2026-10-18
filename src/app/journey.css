@@ -1,0 +1,787 @@
+/* ───────────────────────────────────────────────────────────
+   Part 02 — The Engineer's Journey
+   Same paper, same ink. One restrained electric blue.
+   ─────────────────────────────────────────────────────────── */
+
+:root {
+  --blue: #1f3dff;
+  --blue-wash: rgba(31, 61, 255, 0.1);
+  --ink-soft: #3b362f;
+  --walker-h: clamp(104px, 17vh, 150px);
+  --ws: calc(var(--walker-h) / 300);
+  --road-pad: 56px; /* reading-column indent on narrow screens */
+}
+
+/* ───────── shared illustration language ───────── */
+
+.ill,
+.door-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.ill-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ill-fill {
+  fill: var(--paper-2);
+}
+.ill-blue {
+  stroke: var(--blue);
+}
+.ill-soft {
+  stroke-opacity: 0.4;
+}
+.ill-soft2 {
+  stroke-opacity: 0.22;
+}
+.ill-soft3 {
+  stroke-opacity: 0.12;
+}
+.ill-thin {
+  stroke-width: 1.5;
+  stroke-opacity: 0.35;
+}
+.ill-dashed {
+  stroke-dasharray: 7 9;
+}
+.ill-dot {
+  fill: var(--ink);
+}
+.ill-dot-blue {
+  fill: var(--blue);
+}
+.ill-packet {
+  fill: var(--blue);
+  opacity: 0;
+}
+/* The finished network is lit; the activation timeline starts it unlit. */
+.ill-node {
+  fill: var(--blue-wash);
+  stroke: var(--blue);
+}
+.ill-port {
+  fill: none;
+  stroke: none;
+}
+.ill-label {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  fill: var(--muted);
+  text-anchor: middle;
+}
+.ill-label-caps {
+  font-style: normal;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  fill: var(--ink);
+}
+.mini-fig .fig-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mini-fig .fig-face {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mini-fig .fig-eye {
+  fill: var(--paper-2);
+  stroke: var(--ink);
+  stroke-width: 2.4;
+}
+.mini-fig .fig-pupil {
+  fill: var(--ink);
+}
+
+/* ───────── the section ───────── */
+
+.journey {
+  position: relative;
+  background: var(--paper-2);
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+.journey::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .24  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.j-chrome {
+  position: relative;
+  z-index: 6;
+  padding: var(--pad-y) var(--pad-x) 0;
+}
+
+.j-back {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--ink);
+  text-decoration: none;
+}
+.j-back {
+  white-space: nowrap;
+}
+.j-back span {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-out);
+}
+.j-back:hover span {
+  transform: translateY(-3px);
+}
+
+.journey-track {
+  position: relative;
+  padding-inline: var(--pad-x);
+}
+
+/* ───────── decorative layers ───────── */
+
+.road {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+.road-main,
+.road-trace {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.road-main {
+  stroke: url(#road-fade);
+  stroke-width: 3;
+}
+.road-trace {
+  stroke: var(--blue);
+  stroke-width: 1.6;
+  stroke-linecap: butt;
+}
+.road-join {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.road-join.is-circuit {
+  stroke: var(--blue);
+  stroke-width: 1.8;
+}
+.road-join.is-workflow {
+  stroke: var(--blue);
+  stroke-width: 1.8;
+}
+.road-chip {
+  fill: var(--paper-2);
+  stroke: var(--blue);
+  stroke-width: 1.8;
+}
+.road-node {
+  fill: var(--paper-2);
+  stroke: var(--ink);
+  stroke-width: 2.6;
+  transition: stroke 0.3s, fill 0.3s;
+}
+.road-node.is-active,
+.road-node.is-hot {
+  stroke: var(--blue);
+  fill: var(--blue-wash);
+}
+
+.walker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  width: calc(340 * var(--ws));
+  height: calc(300 * var(--ws));
+  pointer-events: none;
+  visibility: hidden; /* shown once the controller has placed it */
+}
+.walker .stick {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: 50% 50%;
+}
+.walker.is-flipped .stick {
+  transform: scaleX(-1);
+}
+.walker.is-ready {
+  visibility: visible;
+}
+
+/* ───────── the opening screen ───────── */
+
+.j-intro {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100svh - 70px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: clamp(28px, 7vh, 88px);
+}
+
+.journey h2#journey-title {
+  margin: 0;
+  max-width: 11ch;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-variation-settings: "opsz" 144;
+  font-size: clamp(2.9rem, 9.2vw, 9rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.journey h2#journey-title:focus {
+  outline: none;
+}
+
+.j-lead {
+  margin: clamp(14px, 2.4vh, 24px) 0 0;
+  max-width: 28rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.jw {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.08em 0.1em 0.1em 0;
+  margin: -0.08em -0.1em -0.1em 0;
+  vertical-align: top;
+}
+.jw-i {
+  display: inline-block;
+}
+
+.j-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.j-intro .j-anchor {
+  left: 50%;
+  bottom: clamp(110px, 20vh, 200px);
+}
+
+.j-cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(24px, 5vh, 56px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.j-cue svg {
+  width: 14px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.j-cue.is-on {
+  opacity: 1;
+}
+.j-cue.is-on svg {
+  animation: cue-bob 1.8s ease-in-out infinite;
+}
+@keyframes cue-bob {
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+/* ───────── milestones ───────── */
+
+.milestones {
+  position: relative;
+  z-index: 2;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.milestone {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 2fr) minmax(0, 5fr);
+  align-items: center;
+  min-height: max(92svh, 640px);
+  padding-block: 8vh;
+  --road-x: 44%;
+}
+.m-item:nth-child(even) .milestone {
+  --road-x: 56%;
+}
+.milestone .j-anchor {
+  left: var(--road-x);
+  top: 50%;
+}
+
+.m-copy {
+  grid-column: 1;
+  grid-row: 1;
+  max-width: 31rem;
+  position: relative;
+  z-index: 3;
+}
+.m-ill {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: start;
+  width: min(100%, 460px);
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+.m-item:nth-child(even) .m-copy {
+  grid-column: 3;
+  justify-self: end;
+}
+.m-item:nth-child(even) .m-ill {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.m-label {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  margin: -6px 0 0 -4px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.m-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.6em;
+  padding: 0.35em 0.7em;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  color: var(--ink);
+  transition: color 0.3s, background 0.3s, border-color 0.3s;
+}
+.m-arrow {
+  width: 22px;
+  height: 14px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s, transform 0.4s var(--ease-out);
+}
+.m-label:hover .m-arrow,
+.m-label:focus-visible .m-arrow {
+  opacity: 1;
+  transform: none;
+}
+.milestone.is-active .m-label,
+.milestone.is-hot .m-label,
+.m-label:hover {
+  color: var(--blue);
+}
+.milestone.is-active .m-num,
+.milestone.is-hot .m-num,
+.m-label:hover .m-num {
+  color: var(--paper);
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+.m-title {
+  position: relative;
+  margin: 12px 0 0;
+  padding-bottom: 14px;
+  font-family: var(--serif);
+  font-weight: 560;
+  font-variation-settings: "opsz" 120;
+  font-size: clamp(2.1rem, 4.5vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+/* a pencil underline that is drawn when the stop is active */
+.m-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: min(100%, 11em);
+  height: 10px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 10' preserveAspectRatio='none'><path d='M2 6 C30 2 60 8 92 5 S160 3 218 6' fill='none' stroke='%231f3dff' stroke-width='2.2' stroke-linecap='round'/></svg>") no-repeat left center / 100% 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.7s var(--ease-out);
+}
+.milestone.is-active .m-title::after,
+.milestone.is-hot .m-title::after {
+  transform: scaleX(1);
+}
+
+.m-body {
+  margin: 16px 0 0;
+  max-width: 28rem;
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+
+.m-facts {
+  margin-top: 26px;
+  padding-top: 18px;
+  max-width: 28rem;
+  border-top: 1px solid rgba(20, 17, 15, 0.22);
+}
+.m-facts-h {
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.m-list,
+.m-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.m-list li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.m-list li + li {
+  margin-top: 8px;
+}
+.m-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 11px;
+  height: 1.5px;
+  background: var(--blue);
+}
+.m-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.m-chips li {
+  padding: 6px 14px;
+  border: 1.5px solid rgba(20, 17, 15, 0.7);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ───────── the door ───────── */
+
+.j-end {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: 100svh;
+  padding: 14vh 0 10vh;
+}
+.door {
+  position: relative;
+  display: block;
+  width: min(300px, 64vw);
+  color: var(--ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.door:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 10px;
+  border-radius: 14px;
+}
+/* the road ends beside the door, so the walker never stands in front of it */
+.door .j-anchor {
+  left: -24%;
+  bottom: 6%;
+}
+.door-cap {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.door:hover .door-cap,
+.door:focus-visible .door-cap {
+  color: var(--blue);
+}
+.door-light {
+  fill: var(--paper);
+}
+.door-peek-kicker {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-anchor: middle;
+  fill: var(--muted);
+}
+.door-frame {
+  stroke-width: 3.2;
+}
+.door-text text {
+  font-family: var(--serif);
+  font-variation-settings: "opsz" 72;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: 0.02em;
+  fill: var(--ink);
+}
+.door-lever {
+  stroke-width: 3.4;
+}
+.door-hint {
+  opacity: 0;
+}
+.door:hover .door-hint,
+.door:focus-visible .door-hint {
+  opacity: 1;
+}
+
+/* ───────── progress rail ───────── */
+
+.j-rail {
+  position: fixed;
+  right: clamp(12px, 2vw, 28px);
+  top: 50%;
+  z-index: 30;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden; /* not focusable while it is not showing */
+  pointer-events: none;
+  transition: opacity 0.4s, visibility 0s 0.4s;
+}
+html.in-journey .j-rail {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.4s, visibility 0s;
+}
+.j-rail ol {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.j-rail ol::before {
+  content: "";
+  position: absolute;
+  right: 21px;
+  top: 12px;
+  bottom: 12px;
+  width: 1.5px;
+  background: rgba(20, 17, 15, 0.18);
+}
+.j-rail ol::after {
+  content: "";
+  position: absolute;
+  right: 21px;
+  top: 12px;
+  bottom: 12px;
+  width: 1.5px;
+  background: var(--blue);
+  transform: scaleY(var(--p, 0));
+  transform-origin: top;
+}
+.j-rail a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 36px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.j-rail a span {
+  position: relative;
+  z-index: 1;
+  padding: 2px 4px;
+  border-radius: 999px;
+  background: var(--paper-2);
+}
+.j-rail a:hover,
+.j-rail a.is-active {
+  color: var(--blue);
+}
+
+/* ───────── animation staging: only when the controller is running ───────── */
+
+.journey.j-anim [data-reveal] {
+  opacity: 0;
+}
+.journey.j-anim .m-ill {
+  opacity: 0;
+}
+html.hero-open .journey {
+  /* nothing to do: the sheet covers it. Kept explicit for readers. */
+  content-visibility: visible;
+}
+
+/* ───────── tablets and phones: a different composition, not a shrunken one ───────── */
+
+@media (max-width: 899px) {
+  :root {
+    --walker-h: clamp(84px, 13vh, 112px);
+  }
+  .journey h2#journey-title {
+    font-size: clamp(2.6rem, 14vw, 5.2rem);
+  }
+  .j-intro .j-anchor {
+    left: calc(22px - var(--pad-x));
+  }
+  .j-cue {
+    left: calc(var(--pad-x) + var(--road-pad));
+    transform: none;
+    align-items: flex-start;
+  }
+  .milestone {
+    display: block;
+    min-height: 0;
+    padding: 11vh 0 11vh var(--road-pad);
+    --road-x: calc(22px - var(--pad-x));
+  }
+  .m-item:nth-child(even) .milestone {
+    --road-x: calc(22px - var(--pad-x));
+  }
+  .milestone .j-anchor {
+    top: 22%;
+  }
+  .m-copy,
+  .m-item:nth-child(even) .m-copy {
+    max-width: 34rem;
+  }
+  .m-title {
+    font-size: clamp(1.9rem, 8.4vw, 3rem);
+  }
+  .m-ill,
+  .m-item:nth-child(even) .m-ill {
+    margin-top: 34px;
+    width: min(100%, 380px);
+  }
+  .j-end {
+    min-height: 90svh;
+  }
+  .j-rail {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) and (min-width: 600px) {
+  .milestone {
+    padding-left: 96px;
+    --road-pad: 96px;
+  }
+}
+
+/* ───────── reduced motion: complete, still, immediate ───────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .j-cue.is-on svg {
+    animation: none;
+  }
+  .m-title::after,
+  .m-arrow,
+  .m-num,
+  .road-node {
+    transition-duration: 0.01ms !important;
+  }
+}

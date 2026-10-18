@@ -1,0 +1,687 @@
+/* ───────────────────────────────────────────────────────────
+   THE LITTLE ENGINEER — Part 01: The Unexpected Entrance
+   Warm paper, black ink, one pencil-eraser of colour.
+   ─────────────────────────────────────────────────────────── */
+
+:root {
+  --paper: #f5f0e6;
+  --paper-2: #ece5d6;
+  --ink: #14110f;
+  --muted: #5a544a;
+  --accent: #d9482b;
+  --serif: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
+  --sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --pad-x: clamp(20px, 5vw, 64px);
+  --pad-y: clamp(16px, 3vh, 36px);
+
+  /* Figure scale: one viewBox unit in px. The figure is 300 units tall. */
+  --fig-h: clamp(180px, 29vh, 290px);
+  --s: calc(var(--fig-h) / 300);
+  /* Height of the underline SVG that sits beneath the name. */
+  --u-h: clamp(26px, 3.6vw, 56px);
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: auto;
+}
+
+html.hero-open {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--paper);
+  font-family: var(--sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ───────── The sheet (Part 01) ───────── */
+
+.sheet {
+  position: relative;
+  z-index: 50;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--pad-y) var(--pad-x);
+  background: var(--paper);
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+/* With JS the sheet is a fixed layer that can lift away to reveal Part 02. */
+html.js .sheet {
+  position: fixed;
+  inset: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  backface-visibility: hidden;
+  will-change: transform;
+  box-shadow: 0 0 0 rgba(20, 17, 15, 0);
+}
+
+html.js.part2-open .sheet {
+  visibility: hidden;
+}
+
+/* Paper grain — static, no animation cost. */
+.sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .24  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Light that falls across the sheet as it tilts up. */
+.sheet-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to bottom, rgba(20, 17, 15, 0) 40%, rgba(20, 17, 15, 0.22));
+}
+
+.chrome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-height: 44px;
+}
+
+.chrome b {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.skip {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 12px 4px;
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 600;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--ink);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 calc(100% - 10px);
+  background-repeat: no-repeat;
+}
+
+.skip {
+  display: none;
+}
+html.intro .skip {
+  display: inline-block;
+}
+
+/* ───────── Stage ───────── */
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-block: clamp(8px, 2vh, 24px);
+  min-height: 0;
+}
+
+.namewrap {
+  position: relative;
+}
+
+/* The whole composition is as wide as the name, so the underline, the copy
+   column and the figure all measure against the same edge. */
+.stage-inner {
+  width: fit-content;
+  max-width: 100%;
+  align-self: flex-start;
+  /* "safe" vertical centring: never pushes content above the scrollable area */
+  margin-block: auto;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  /* "MILAN SINGLA" is ~6.45em wide: size it to fill the measure exactly. */
+  font-size: min(calc((100vw - 2 * var(--pad-x)) / 6.55), 24vh);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-bottom: 0.03em;
+  font-kerning: normal;
+}
+
+.name .word {
+  display: inline-block;
+}
+
+.name .word + .word {
+  margin-left: 0.22em;
+}
+
+.name .cm {
+  display: inline-block;
+  overflow: hidden;
+  /* room so serifs and the baseline are never clipped by the mask */
+  padding: 0.06em 0.03em 0.02em;
+  margin: -0.06em -0.03em -0.02em;
+  vertical-align: top;
+}
+
+.name .ch {
+  display: inline-block;
+  font-variation-settings: "opsz" 144, "wght" var(--w, 600);
+  will-change: transform;
+}
+
+.underline {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 2px);
+  width: 100%;
+  height: var(--u-h);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.underline path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ───────── Row: copy + figure ───────── */
+
+.row {
+  position: relative;
+  margin-top: var(--u-h);
+  display: flex;
+  flex-direction: column;
+  /* leaves room for the figure when the layout is stacked */
+  padding-top: calc(285 * var(--s) - 0.48 * var(--u-h));
+}
+
+.copy {
+  max-width: 44rem;
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 650;
+  font-size: clamp(1.28rem, 5.4vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.headline .hw {
+  display: inline-block;
+  overflow: hidden;
+  /* extra right room: italic glyphs overhang their advance width */
+  padding: 0.08em 0.14em 0.06em 0;
+  margin: -0.08em -0.14em -0.06em 0;
+  vertical-align: top;
+}
+
+.headline .hw-i {
+  display: inline-block;
+  will-change: transform;
+}
+
+.headline em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.02em;
+}
+
+.support {
+  margin: clamp(14px, 2.2vh, 22px) 0 0;
+  max-width: 34rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.125rem);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.ctas {
+  margin-top: clamp(22px, 4vh, 40px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 14px;
+}
+
+/* ───────── Buttons ───────── */
+
+.btn {
+  --bg: var(--ink);
+  --fg: var(--paper);
+  --hover-bg: var(--paper);
+  --hover-fg: var(--ink);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 0 26px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+
+.btn-ghost {
+  --bg: transparent;
+  --fg: var(--ink);
+  --hover-bg: var(--ink);
+  --hover-fg: var(--paper);
+}
+
+/* Fill that blooms from wherever the pointer entered. */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--hover-bg);
+  clip-path: circle(0% at var(--mx, 50%) var(--my, 100%));
+  transition: clip-path 0.55s var(--ease-out);
+}
+
+.btn-label {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  line-height: 1.2;
+  padding-block: 1px;
+}
+
+.btn-text {
+  display: block;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.btn-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  white-space: nowrap;
+  color: var(--hover-fg);
+}
+
+.btn-arrow {
+  flex: none;
+  width: 22px;
+  height: 14px;
+  overflow: visible;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.btn-arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    color: var(--hover-fg);
+  }
+  .btn:hover::before {
+    clip-path: circle(150% at var(--mx, 50%) var(--my, 100%));
+  }
+  .btn:hover .btn-text {
+    transform: translateY(calc(-100% - 2px));
+  }
+  .btn:hover .btn-arrow {
+    transform: translateX(5px);
+  }
+}
+
+/* Keyboard focus gets the same treatment as hover. */
+.btn:focus-visible {
+  color: var(--hover-fg);
+  outline-offset: 5px;
+  border-radius: 999px;
+}
+.btn:focus-visible::before {
+  clip-path: circle(150% at 50% 50%);
+}
+.btn:focus-visible .btn-text {
+  transform: translateY(calc(-100% - 2px));
+}
+.btn:focus-visible .btn-arrow {
+  transform: translateX(5px);
+}
+
+/* Touch: a firm, immediate press state instead of hover. */
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn[aria-expanded="true"]::before {
+  clip-path: circle(150% at 50% 50%);
+}
+.btn[aria-expanded="true"] {
+  color: var(--hover-fg);
+}
+.btn[aria-expanded="true"] .btn-text {
+  transform: translateY(calc(-100% - 2px));
+}
+
+/* ───────── The figure ───────── */
+
+.figure {
+  position: absolute;
+  z-index: 3;
+  width: calc(340 * var(--s));
+  height: calc(300 * var(--s));
+  /* tip of the pencil, when held up, sits on the underline's last point */
+  left: calc(93% - 208 * var(--s));
+  top: calc(-0.48 * var(--u-h) - 20.2 * var(--s) + 2px);
+  pointer-events: none;
+}
+
+.stick {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: 50% 50%;
+}
+
+.figure.is-flipped .stick {
+  transform: scaleX(-1);
+}
+
+.stick-line,
+.stick-face {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.stick-line {
+  stroke-width: 5;
+}
+.stick-face {
+  stroke-width: 2.6;
+}
+.stick-eye {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 2.4;
+}
+.stick-pupil {
+  fill: var(--ink);
+}
+.stick-shadow {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.28;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.stick-extras path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.stick-dust path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-opacity: 0.5;
+}
+.stick-dust {
+  opacity: 0;
+}
+.stick-sweat {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+[data-part="extras"] path {
+  opacity: 0;
+}
+
+/* ───────── Speech bubble ───────── */
+
+.bubble {
+  position: absolute;
+  z-index: 4;
+  right: calc(100% - 128 * var(--s));
+  top: calc(40 * var(--s));
+  width: max-content;
+  max-width: min(17.5rem, 66vw);
+  padding: 14px 18px 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 18px 18px 4px 18px;
+  background: var(--paper);
+  font-family: var(--serif);
+  font-variation-settings: "opsz" 24;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--ink);
+  pointer-events: auto;
+  transform-origin: 100% 100%;
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  bottom: 14px;
+  width: 14px;
+  height: 14px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-left: 0;
+  border-bottom: 0;
+  transform: rotate(45deg) skew(8deg, 8deg);
+}
+
+.bubble[hidden] {
+  display: none;
+}
+
+.bubble p {
+  margin: 0;
+}
+
+.bubble .bubble-meta {
+  margin-top: 8px;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.bubble-link {
+  appearance: none;
+  margin-top: 12px;
+  padding: 10px 0 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+}
+
+/* ───────── Wide layout: copy left, figure right ───────── */
+
+@media (min-width: 900px) {
+  .row {
+    padding-top: clamp(20px, 4vh, 44px);
+    min-height: calc(285 * var(--s) - 0.48 * var(--u-h));
+  }
+  .copy {
+    max-width: min(56%, 46rem);
+  }
+  .headline {
+    font-size: clamp(1.5rem, 2.55vw, 2.65rem);
+  }
+}
+
+@media (max-width: 899px) {
+  .name {
+    white-space: normal;
+    font-size: min(calc((100vw - 2 * var(--pad-x)) / 3.62), 21vh);
+    line-height: 0.88;
+  }
+  .stage-inner {
+    width: 100%;
+  }
+  .name .word {
+    display: block;
+  }
+  .name .word + .word {
+    margin-left: 0;
+  }
+  .figure {
+    left: calc(93% - 208 * var(--s));
+  }
+}
+
+@media (max-width: 520px) {
+  .ctas .btn {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Short landscape screens: let the sheet scroll, shrink the figure. */
+@media (max-height: 560px) {
+  :root {
+    --fig-h: clamp(150px, 40vh, 200px);
+  }
+}
+
+/* ───────── Intro: nothing flashes before the timeline starts ───────── */
+
+/* until the webfonts are in (never longer than 0.9s): nothing visible can reflow */
+html.fonts-wait body {
+  visibility: hidden;
+}
+
+html.intro .i-hide {
+  visibility: hidden;
+}
+
+/* ───────── Reduced motion: everything still works, nothing travels ───────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+  .btn,
+  .btn::before,
+  .btn-text,
+  .btn-arrow {
+    transition-duration: 0.01ms !important;
+  }
+  .btn:hover .btn-text,
+  .btn:focus-visible .btn-text,
+  .btn[aria-expanded="true"] .btn-text {
+    transform: none;
+  }
+  .btn:hover .btn-arrow {
+    transform: none;
+  }
+  .btn:active {
+    transform: none;
+  }
+}
