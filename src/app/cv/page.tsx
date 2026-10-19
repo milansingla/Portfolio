@@ -5,9 +5,9 @@ import { pageMeta } from "@/lib/site";
 import "./cv.css";
 
 export const metadata: Metadata = pageMeta({
-  title: { absolute: "Milan Singla — CV (Curriculum Vitae)" },
+  title: { absolute: "Milan Singla CV | Full-Stack Developer" },
   description:
-    "The CV of Milan Singla: B.Tech Computer Science and Engineering at Chitkara University, full-stack projects (Termedu, Shipyard, VRxED Meet, VRxNuro), skills and achievements. View it here or download the PDF.",
+    "Milan Singla's CV: full-stack developer and software engineer with React, Next.js, TypeScript, Node.js, and projects spanning education, deployment, and AI.",
   path: "/cv",
 });
 
