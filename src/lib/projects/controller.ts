@@ -101,6 +101,48 @@ export function createProjects(host: HTMLElement, reduced: boolean): Projects {
     if (reduced) return;
     myRigs.forEach((r) => r.life());
 
+    // The chapter's stickman glances at what the visitor points at, and celebrates a
+    // project being opened. Short, rate-limited, and torn down with the controller.
+    const lead = myRigs[0];
+    if (lead) {
+      let lastGlance = 0;
+      let glanceT = 0;
+      let cheerT = 0;
+      let lastCheer = 0;
+      cleanups.push(() => {
+        window.clearTimeout(glanceT);
+        window.clearTimeout(cheerT);
+      });
+      const look = (x: number, y: number) => {
+        const now = performance.now();
+        if (now - lastGlance < 900) return;
+        lastGlance = now;
+        lead.gazeAt(x, y);
+        window.clearTimeout(glanceT);
+        glanceT = window.setTimeout(() => lead.gaze(0, 0), 1400);
+      };
+      article.querySelectorAll<HTMLElement>(".p-screen, .p-link, summary").forEach((el) => {
+        on(el, "pointerenter", ((e: PointerEvent) => e.pointerType !== "touch" && look(e.clientX, e.clientY)) as EventListener);
+      });
+      on(article, "focusin", ((e: FocusEvent) => {
+        const t = e.target as HTMLElement;
+        if (!t.matches?.(".p-link, summary")) return;
+        const r = t.getBoundingClientRect();
+        look(r.left + r.width / 2, r.top + r.height / 2);
+      }) as EventListener);
+      article.querySelectorAll<HTMLDetailsElement>("details").forEach((d) =>
+        on(d, "toggle", () => {
+          const now = performance.now();
+          if (!d.open || now - lastCheer < 1500) return;
+          lastCheer = now;
+          lead.hop(8);
+          lead.mood("grin", 0.15);
+          window.clearTimeout(cheerT);
+          cheerT = window.setTimeout(() => lead.mood("smile", 0.25), 1000);
+        }),
+      );
+    }
+
     const ctx: Ctx = { id, article, svg, screen, figEls, rigs: myRigs, restore };
     const tl = BUILDERS[id](ctx);
     tl.progress(0.0001);

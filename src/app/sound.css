@@ -1,0 +1,177 @@
+/* ───────── Sound controls (components/SoundControl.tsx) ───────── */
+
+/* Needs script: hidden without it (and in the 10-second fallback state). */
+.snd {
+  display: none;
+}
+html.js .snd {
+  position: fixed;
+  top: max(10px, calc(var(--pad-y) - 6px));
+  right: max(10px, calc(var(--pad-x) - 12px));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 0 1px rgba(20, 17, 15, 0.12);
+}
+/* tucked away while scrolling down; any focus inside brings it back */
+html.js .snd {
+  transition: transform 0.35s var(--ease-out), opacity 0.25s;
+}
+html.js .snd.snd-away:not(:focus-within) {
+  transform: translateY(-140%);
+  opacity: 0;
+  pointer-events: none;
+}
+.snd-btn {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s, background-color 0.25s, transform 0.25s var(--ease-out);
+}
+.snd-btn:hover {
+  color: var(--ink);
+  background: rgba(20, 17, 15, 0.06);
+  transform: translateY(-1px);
+}
+.snd-btn:active {
+  transform: scale(0.94);
+}
+.snd-btn:focus-visible {
+  outline: 2px solid var(--blue, #1f3dff);
+  outline-offset: 1px;
+}
+.snd-btn[aria-pressed="true"] {
+  color: var(--paper);
+  background: var(--ink);
+}
+.snd-btn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: default;
+}
+.snd-btn svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.snd-body,
+.snd-note-h {
+  fill: currentColor;
+  stroke: none;
+}
+.snd-note-h {
+  stroke: none;
+}
+/* the slash shows while it is off; the waves show while it is on */
+.snd-off {
+  opacity: 0.9;
+}
+.snd-btn[aria-pressed="true"] .snd-off {
+  opacity: 0;
+}
+.snd-wave {
+  opacity: 0;
+}
+.snd-btn[aria-pressed="true"] .snd-wave {
+  opacity: 1;
+}
+.snd-btn:hover .snd-w1,
+.snd-btn.is-pulse .snd-w1 {
+  animation: snd-ripple 0.8s ease-out;
+}
+.snd-btn:hover .snd-w2,
+.snd-btn.is-pulse .snd-w2 {
+  animation: snd-ripple 0.8s 0.12s ease-out;
+}
+@keyframes snd-ripple {
+  0% {
+    transform: translateX(-2px);
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+/* a small confirmation when toggled */
+.snd-btn.is-pulse {
+  animation: snd-pop 0.5s var(--ease-out);
+}
+@keyframes snd-pop {
+  0% {
+    transform: scale(0.82);
+  }
+  55% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.snd-vol {
+  display: flex;
+  align-items: center;
+  width: 84px;
+  height: 44px;
+  padding-right: 12px;
+}
+.snd-vol input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+.snd-vol input:focus-visible {
+  outline: 2px solid var(--blue, #1f3dff);
+  outline-offset: 2px;
+}
+@media (max-width: 420px) {
+  .snd-vol {
+    width: 64px;
+  }
+  .snd-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snd-btn,
+  .snd-btn *,
+  .snd-btn.is-pulse,
+  html.js .snd {
+    transition: none !important;
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* music was on last visit: a small dot says "ready", it never starts by itself */
+.snd-btn[data-ready="true"] {
+  position: relative;
+}
+.snd-btn[data-ready="true"]::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue, #1f3dff);
+}

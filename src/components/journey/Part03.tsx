@@ -1,3 +1,4 @@
+import Ambient from "../Ambient";
 import Stickman from "../Stickman";
 import Projects from "../projects/Projects";
 import { PART3_INTRO } from "@/lib/projects/data";
@@ -50,6 +51,7 @@ export default function Part03({ overlay = false }: { overlay?: boolean }) {
   }
   return (
     <section id="part-03" className="part3" data-el="part3" aria-labelledby="part3-title">
+      <Ambient variant={2} />
       <header className="chrome">
         <a className="j-back" href="#part-02" data-el="to-journey">
           <span aria-hidden="true">↑</span> Back to the road

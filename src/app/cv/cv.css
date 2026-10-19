@@ -1,0 +1,183 @@
+/* ───────── /cv — the CV inside the site ───────── */
+.cv {
+  min-height: 100svh;
+  padding: var(--pad-y) var(--pad-x) clamp(40px, 8vh, 96px);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.cv-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+}
+.cv-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font: 600 0.6875rem var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+.cv-back span {
+  transition: transform 0.3s var(--ease-out);
+}
+.cv-back:hover span,
+.cv-back:focus-visible span {
+  transform: translateX(-3px);
+}
+.cv-head {
+  padding: clamp(28px, 6vh, 64px) 0 clamp(20px, 3vh, 36px);
+}
+.cv-kicker {
+  margin: 0 0 14px;
+  font: 600 0.6875rem var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cv-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-variation-settings: "opsz" 144;
+  font-size: clamp(2.6rem, 9vw, 6.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+.cv-sub {
+  margin: 18px 0 0;
+  max-width: 34rem;
+  font: 400 1rem/1.5 var(--sans);
+  color: var(--muted);
+}
+.cv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 26px;
+  margin-top: 28px;
+}
+.cv-dl {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 600 0.8125rem var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.3s var(--ease-out);
+}
+.cv-dl:hover,
+.cv-dl:focus-visible {
+  background: var(--blue, #1f3dff);
+  transform: translateY(-2px);
+}
+.cv-dl:active {
+  transform: translateY(0) scale(0.98);
+}
+.cv-dl .btn-arrow {
+  width: 22px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s var(--ease-out);
+}
+.cv-dl:hover .btn-arrow,
+.cv-dl:focus-visible .btn-arrow {
+  transform: translateX(4px);
+}
+.cv-open {
+  font: 500 0.9375rem var(--sans);
+  color: var(--ink);
+}
+.cv-viewer {
+  margin-top: 8px;
+}
+.cv-frame-wrap {
+  position: relative;
+  height: min(86vh, 1100px);
+  min-height: 520px;
+  border-radius: 14px;
+  background: var(--paper-2);
+  box-shadow: 0 0 0 1.5px var(--ink), 0 18px 50px rgba(20, 17, 15, 0.12);
+  overflow: hidden;
+}
+.cv-frame-wrap::before {
+  content: "Loading the CV…";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 500 0.875rem var(--sans);
+  color: var(--muted);
+}
+.cv-frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.cv-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  font: 400 1rem/1.6 var(--sans);
+  background: var(--paper-2);
+}
+.cv-fallback a {
+  color: var(--ink);
+  font-weight: 600;
+}
+.cv-img {
+  display: block;
+  width: 100%;
+  max-width: 880px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px var(--ink), 0 14px 40px rgba(20, 17, 15, 0.12);
+}
+.cv-note {
+  margin: 20px 0 0;
+  text-align: center;
+  font: 400 0.9375rem var(--sans);
+  color: var(--muted);
+}
+.cv-note a {
+  color: var(--ink);
+  font-weight: 600;
+}
+@media (max-width: 520px) {
+  .cv-dl {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-dl,
+  .cv-dl .btn-arrow,
+  .cv-back span {
+    transition-duration: 0.01ms !important;
+  }
+}

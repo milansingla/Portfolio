@@ -1,3 +1,4 @@
+import Ambient from "../Ambient";
 import Playground from "../playground/Playground";
 import Contact from "../playground/Contact";
 import { PART4_INTRO, CONTACT, FOOTER } from "@/lib/playground/data";
@@ -6,6 +7,7 @@ import { PART4_INTRO, CONTACT, FOOTER } from "@/lib/playground/data";
 export default function Part04() {
   return (
     <section id="part-04" className="part4" data-el="part4" aria-labelledby="part4-title">
+      <Ambient variant={3} />
       <header className="chrome">
         <a className="j-back" href="#part-03">
           <span aria-hidden="true">↑</span> Back to the projects

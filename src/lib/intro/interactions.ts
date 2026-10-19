@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import type { Rig } from "../stickman/rig";
+import { sfx } from "../sound/sfx";
 
 export interface InteractionEls {
   root: HTMLElement;
@@ -176,6 +177,7 @@ export function bindInteractions(rig: Rig, els: InteractionEls, reduced: boolean
     rig.pose("waving", reduced ? 0.01 : 0.4, "back.out(1.6)");
     rig.mood("grin", 0.15);
     if (!reduced) waveTl = rig.wave(4);
+    sfx.play("chime");
     glanceLocked = true;
   };
 

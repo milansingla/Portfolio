@@ -31,7 +31,6 @@ export const MILESTONES: Milestone[] = [
     facts: {
       heading: "On paper",
       items: [
-        "CGPA 8.37, according to the supplied CV",
         "Coursework: Data Structures, Algorithms, Operating Systems, Computer Networks, Database Management",
       ],
     },

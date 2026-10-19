@@ -1,0 +1,158 @@
+/* ───────── Ambient background (see components/Ambient.tsx) ───────── */
+
+/* One viewport-tall layer that stays in view while its section scrolls past.
+   Negative bottom margin: it adds nothing to the section's height. */
+.amb {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  margin-bottom: -100svh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  contain: paint;
+}
+.amb-wrap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 110px;
+  animation: amb-y var(--up, 23s) ease-in-out infinite alternate;
+}
+.amb-w {
+  display: block;
+  max-width: none;
+  animation: amb-x var(--d, 120s) linear infinite;
+  will-change: transform;
+}
+.amb-w path,
+.amb-line path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.amb-w path {
+  stroke: var(--ink);
+  stroke-width: 1.3;
+  opacity: 0.075;
+}
+.amb-wrap2 .amb-w path {
+  opacity: 0.06;
+}
+.amb-wrap3 .amb-w path {
+  opacity: 0.05;
+}
+@keyframes amb-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--p, -900px), 0, 0);
+  }
+}
+@keyframes amb-y {
+  from {
+    transform: translate3d(0, -14px, 0);
+  }
+  to {
+    transform: translate3d(0, 16px, 0);
+  }
+}
+
+/* one faint blue line that wanders slowly across its corner */
+.amb-line {
+  position: absolute;
+  display: block;
+  max-width: none;
+  animation: amb-wander 95s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.amb-line path {
+  stroke: #1f3dff;
+  stroke-width: 1.6;
+  opacity: 0.16;
+}
+@keyframes amb-wander {
+  from {
+    transform: translate3d(-30px, 10px, 0) rotate(-3deg);
+  }
+  to {
+    transform: translate3d(60px, -26px, 0) rotate(2deg);
+  }
+}
+
+/* tiny sparks: a small blue cross that fades in and out, rarely */
+.amb-sp {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  opacity: 0;
+  animation: amb-spark 19s ease-in-out infinite;
+}
+.amb-sp::before,
+.amb-sp::after {
+  content: "";
+  position: absolute;
+  background: #1f3dff;
+  border-radius: 1px;
+}
+.amb-sp::before {
+  left: 5px;
+  top: 0;
+  width: 1.5px;
+  height: 11px;
+}
+.amb-sp::after {
+  left: 0;
+  top: 5px;
+  width: 11px;
+  height: 1.5px;
+}
+.amb-sp2 {
+  animation-duration: 27s;
+  animation-delay: 9s;
+}
+.amb-sp1 {
+  animation-delay: 4s;
+}
+@keyframes amb-spark {
+  0%,
+  72%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0deg);
+  }
+  80% {
+    opacity: 0.5;
+    transform: scale(1) rotate(45deg);
+  }
+  90% {
+    opacity: 0.12;
+    transform: scale(0.8) rotate(80deg);
+  }
+}
+
+/* paused while the tab is hidden (set from Portfolio.tsx) */
+html.tab-hidden .amb,
+html.tab-hidden .amb * {
+  animation-play-state: paused;
+}
+
+@media (max-width: 640px) {
+  .amb-wrap3,
+  .amb-sp2 {
+    display: none;
+  }
+}
+
+/* reduced motion: the marks stay, nothing moves */
+@media (prefers-reduced-motion: reduce) {
+  .amb,
+  .amb * {
+    animation: none !important;
+  }
+  .amb-sp {
+    display: none;
+  }
+}

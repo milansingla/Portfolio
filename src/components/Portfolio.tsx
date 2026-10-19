@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import Stickman from "./Stickman";
+import Ambient from "./Ambient";
+import SoundControl from "./SoundControl";
+import Monogram from "./Monogram";
 import Journey from "./journey/Journey";
 import Part03 from "./journey/Part03";
 import Part04 from "./journey/Part04";
@@ -45,8 +48,12 @@ export default function Portfolio() {
     const teardown: Array<() => void> = [];
     const html = document.documentElement;
     const w = window as unknown as { __peReady?: boolean; __peFallback?: () => void };
+    // ambient drift pauses while the tab is hidden
+    const onVis = () => html.classList.toggle("tab-hidden", document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    teardown.push(() => document.removeEventListener("visibilitychange", onVis));
     w.__peReady = true; // tells the boot script's watchdog that the app started
-    if (html.classList.contains("fallback")) return; // watchdog already showed the finished page
+    if (html.classList.contains("fallback")) return () => teardown.forEach((t) => t()); // watchdog already showed the finished page
 
     (async () => {
       const [{ default: gsap }, { Rig }, intro, paperMod, inter, journeyMod, projectsMod, playgroundMod] = await Promise.all([
@@ -242,11 +249,10 @@ export default function Portfolio() {
       {/* ═════════ PART 01 — THE UNEXPECTED ENTRANCE ═════════ */}
       <section id="part-01" className="sheet" data-el="sheet" aria-label="Part 01 — The Unexpected Entrance">
         <div className="sheet-shade" data-el="shade" aria-hidden="true" />
+        <Ambient variant={0} />
 
         <header className="chrome">
-          <span>
-            <b>Milan Singla</b>
-          </span>
+          <Monogram />
         </header>
 
         <div className="stage">
@@ -358,6 +364,8 @@ export default function Portfolio() {
         <Part04 />
       </main>
       <Part03 overlay />
+      {/* last in the tab order on purpose: it never stands between a visitor and the content */}
+      <SoundControl />
     </div>
   );
 }

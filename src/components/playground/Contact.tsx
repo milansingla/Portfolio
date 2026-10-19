@@ -65,6 +65,15 @@ export default function Contact() {
           </button>
         </li>
         <li>
+          <span className="pg-links-k">CV</span>
+          <a href={CONTACT.cv.page} aria-label="View Milan Singla's CV">
+            View CV
+          </a>
+          <a href={CONTACT.cv.url} download={CONTACT.cv.file} className="pg-cv-dl" aria-label="Download Milan Singla's CV (PDF)">
+            Download PDF
+          </a>
+        </li>
+        <li>
           <span className="pg-links-k">GitHub</span>
           <a href={CONTACT.github.url} target="_blank" rel="noopener noreferrer">
             {CONTACT.github.label}

@@ -94,6 +94,8 @@ Screenshots from the runs go to `/tmp/little-engineer-e2e` (override with `E2E_O
 | `part4.py` | Part 04: terminal allow-list and hostile input, the freehand pad (strokes, colour, size, eraser, undo, clear, pointer capture, pen, touch, high-DPI), incident, contact links, final animation, no-JS, reduced motion |
 | `a11y_cleanup_replay.py` | Heading structure, colour contrast, incident replay, listener cleanup (set `DEV_URL` to a `next dev` server to also compare React Strict Mode) |
 | `layout_perf.py` | 1440 / 1280 / 768 / 390 / 320 px: overflow, layout shift, failed requests, console errors, tiny text and touch targets |
+| `branding_seo.py` | MS monogram (overlap, home link, hover, focus, reduced motion, no-JS), favicon files, the `/cv` page (embed, phone preview, download, back link), redacted CV, metadata / canonical / JSON-LD / robots / sitemap output, remembered music "ready" state, Part 02 walker going straight down on a phone |
+| `polish_sound.py` | Sound and ambient layer: muted by default and no audio context before the visitor opts in, toggles, localStorage, rate limits, quiet levels, music off by default / fades / never restored, audio blocked or missing, ambient click-through / paused with the tab / still under reduced motion, keyboard and focus, tuck-away on scroll, stickman reactions |
 | `lifecycle_perf.py` | Part 03's per-frame callback sleeps when settled and far away, Part 01's figure stops when Part 02+ is open, reduced motion runs no per-frame work, and the 10-second fallback when scripts never start |
 
 ## Folder overview
@@ -196,7 +198,55 @@ npm start
 This is a standard Next.js server build. No hosting provider is configured in
 this repository.
 
+## Sound and the living background
+
+- **Sound effects are synthesised in the browser** (Web Audio): click, pop, chime, confirm, key, pencil, whoosh. Each has a
+  minimum gap; hovering and moving the mouse make no sound.
+- **Muted by default.** Two small buttons (top right) switch sound effects and ambient music on; they are independent.
+  Nothing audio is created until the visitor switches something on *and* has interacted with the page. The effects choice and the
+  volume are remembered in `localStorage` (`le.sound.v1`). Music is remembered only as "ready" (a small dot) and never plays
+  without a click. If audio is missing or blocked the buttons say so and the page is unaffected. The control tucks away while
+  scrolling down.
+- **Ambient music** is the track in `public/audio/ambient-portfolio.mp3`; see `docs/music.md` (source, format, level, and the
+  licence check you still need to do). A quiet generated pad is the fallback if the file cannot be played.
+- **Background:** slow drifting hand-drawn lines per section plus a few marks, animated with `transform` only, paused when the
+  tab is hidden, still under reduced motion, never receiving clicks.
+- Source: `src/lib/sound/`, `src/components/SoundControl.tsx`, `src/components/Ambient.tsx`, `src/app/{sound,ambient,polish}.css`.
+
+## Branding, CV and SEO
+
+- **Favicon:** a static M (`src/app/icon.svg`, `favicon.ico` with 16/32/48 px, `apple-icon.png`). Next picks these up by file name.
+  There is no MS favicon: at 16 px the M alone is the readable one.
+- **MS monogram:** `src/components/Monogram.tsx` replaces the corner name (the headline keeps the full name). A large M with the S
+  laid across its right leg; the S has a paper-coloured outline underneath, so it visibly cuts through the M. The finished mark is
+  the default state; the ink-stroke reveal (M, then S) is a CSS animation that only decorates it. Hover nudges the letters and
+  shows a blue full stop; a click replays the reveal. Still under reduced motion. On `/cv` it is a plain link home.
+- **CV page:** `/cv` (`src/app/cv/`, `src/components/CvViewer.tsx`). "View CV" in the contact area opens it; "Download PDF" is the
+  file itself. Wide screens with a pointer embed the PDF (the browser's own renderer, inside the site); phones, touch devices and
+  no-JavaScript visitors get a one-page preview image (`public/cv-preview.png`) with download links, and the embed has its own
+  fallback text. The file is `public/Milan-Singla-CV.pdf`: a copy of the CV with the phone number, roll number, CGPA and
+  percentages removed from the file itself (not covered up). If you update the CV, make a new copy the same way and regenerate
+  `cv-preview.png`. The CV still lists the Termedu live link.
+- **SEO:** the production address is `https://milansingla.tech`, set as `NEXT_PUBLIC_SITE_URL` in `.env.production`. `src/lib/site.ts`
+  is the one place that reads it (https only; localhost and tunnel addresses are refused). It drives: canonical links, Open Graph and
+  Twitter cards (image `public/og.png`), the JSON-LD on the homepage (Person and WebSite, only facts from the page or CV, with the
+  real LinkedIn and GitHub URLs), `robots.txt` (allows everything, names the sitemap) and `sitemap.xml` (`/` and `/cv`). The home
+  canonical is the origin, which Next writes without the trailing slash (the same URL). Hosts that build from the repository pick
+  `.env.production` up automatically; if your host injects its own value, it must be `https://milansingla.tech`.
+  If the variable were empty none of the address-bearing tags would be emitted.
+- **Google Search Console:** add `milansingla.tech` as a property (the Domain type verifies with a DNS TXT record at your registrar;
+  the URL-prefix type gives an HTML file or meta tag), then submit `https://milansingla.tech/sitemap.xml` under Sitemaps, use URL
+  Inspection on `https://milansingla.tech/` and `/cv`, and watch Pages and Performance over the following weeks. No verification
+  token is in this project. Brave Search has no equivalent required step; it follows the same crawlable pages and sitemap.
+  Search engines decide whether and when to index; nothing here guarantees a ranking.
+- **What helps ranking and what does not depend on the code:** done here are a correct title and description, canonical URLs, the
+  sitemap, structured data, the full name in the heading, descriptive project text and image alt text. Outside the code: how
+  long the site has been live, links from other sites (LinkedIn, GitHub, your university and project pages should point here), and
+  competing pages for the same name.
+
 ## Known limits
+
+- Audio was measured (node counts, envelope levels, rate limits) but never listened to; judge the sound by ear.
 
 - Tested in headless Chromium only. Safari, Firefox, real phones and screen readers have not been tested.
 - The Termedu live site (`app.termedu.in`, from the CV) is not linked because it does not work. The project

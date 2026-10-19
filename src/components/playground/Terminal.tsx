@@ -35,6 +35,7 @@ export default function Terminal() {
 
   const submit = (raw: string) => {
     const res = run(raw);
+    window.dispatchEvent(new CustomEvent("le:terminal"));
     const shown = raw.trim().slice(0, MAX_INPUT);
     history.current = [...history.current.slice(-19), shown];
     cursor.current = -1;

@@ -12,6 +12,7 @@ export const CONTACT = {
   headline: ["LET’S BUILD", "SOMETHING", "INTERESTING."],
   line: "Have an idea, a project, or an opportunity? Let’s talk.",
   email: "milansingla15@gmail.com",
+  cv: { page: "/cv", url: "/Milan-Singla-CV.pdf", file: "Milan-Singla-CV.pdf" },
   github: { url: "https://github.com/milansingla", label: "github.com/milansingla" },
   linkedin: {
     url: "https://www.linkedin.com/in/milan-singla-146437215/",

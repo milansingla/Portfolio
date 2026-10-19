@@ -285,7 +285,7 @@ export function createJourney(host: HTMLElement, reduced: boolean): Journey {
   let dirty = true;
   let facingLeft = false;
   let lastMove = 0;
-  let walking: gsap.core.Tween | null = null;
+  let walking: gsap.core.Animation | null = null;
   let inJourney = false;
 
   const focusY = () => window.scrollY + window.innerHeight * FOCUS - trackTop;
@@ -351,7 +351,7 @@ export function createJourney(host: HTMLElement, reduced: boolean): Journey {
       if (started) walkerEl.classList.add("is-ready");
       if (Math.abs(diff) > 0.4) {
         lastMove = performance.now();
-        if (!walking) walking = rig.walk(0.17);
+        if (!walking) walking = mqNarrow.matches ? rig.descend(0.2) : rig.walk(0.17);
       }
     }
     const prog = clamp(cur / Math.max(1, Ls[4]), 0, 1);

@@ -2,24 +2,23 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/fraunces/opsz.css";
 import "@fontsource-variable/fraunces/wght-italic.css";
 import "@fontsource-variable/inter/index.css";
+import { SITE_URL, PROFILE } from "@/lib/site";
 import "./globals.css";
 import "./journey.css";
 import "./projects.css";
 import "./playground.css";
+import "./ambient.css";
+import "./sound.css";
+import "./polish.css";
 
 export const metadata: Metadata = {
-  title: "Milan Singla — I build things that probably shouldn't work this well",
-  description:
-    "Milan Singla — full-stack development, AI experiments, and products built from scratch. An interactive portfolio: four projects, one stickman.",
-  openGraph: {
-    title: "Milan Singla — The Little Engineer",
-    description: "Full-stack development. AI experiments. Products built from scratch.",
-    type: "website",
-    siteName: "The Little Engineer",
-  },
-  icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f5f0e6'/%3E%3Ccircle cx='16' cy='10' r='5' fill='none' stroke='%2314110f' stroke-width='2.4'/%3E%3Cpath d='M16 15v8M16 23l-5 5M16 23l5 5M16 18l-6 4M16 18l6 4' fill='none' stroke='%2314110f' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E",
-  },
+  ...(SITE_URL ? { metadataBase: new URL(SITE_URL) } : {}),
+  title: { default: PROFILE.title, template: "%s | Milan Singla" },
+  description: PROFILE.description,
+  applicationName: PROFILE.siteName,
+  authors: [{ name: PROFILE.name, url: PROFILE.linkedin }],
+  creator: PROFILE.name,
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
@@ -40,6 +39,8 @@ export const viewport: Viewport = {
  */
 const bootScript = `(function(){try{
 var d=document.documentElement,c=d.classList,q=location.search;
+/* Only the portfolio itself (/) has the animated entrance; other pages are plain documents. */
+if(location.pathname!=='/'){c.add('subpage');return}
 c.add('js');
 var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* Hold first paint until the webfonts are in (max 0.9s) so headings never reflow in view. */
@@ -69,7 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }

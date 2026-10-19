@@ -139,7 +139,7 @@ with sync_playwright() as p:
     # ───────── contact ─────────
     links=pg.evaluate("[...document.querySelectorAll('#contact a, #part-04 footer a')].map(a=>[a.getAttribute('href'),a.target,a.rel])")
     print(links)
-    want={"mailto:milansingla15@gmail.com","https://github.com/milansingla","https://www.linkedin.com/in/milan-singla-146437215/","#part-02"}
+    want={"/cv","/Milan-Singla-CV.pdf","mailto:milansingla15@gmail.com","https://github.com/milansingla","https://www.linkedin.com/in/milan-singla-146437215/","#part-02"}
     ck("contact hrefs exactly the CV ones", {l[0] for l in links}==want, str({l[0] for l in links}^want))
     ck("external links safe", all(("noopener" in l[2] and l[1]=="_blank") for l in links if l[0].startswith("https")))
     ck("CTA is the email link", pg.evaluate("document.querySelector('[data-pg=cta]').getAttribute('href')")=="mailto:milansingla15@gmail.com")
@@ -223,7 +223,7 @@ with sync_playwright() as p:
     ctx,pg,errs,_,_=setup(b,viewport={"width":1440,"height":900},java_script_enabled=False)
     pg.goto(URL); pg.wait_for_timeout(1500)
     ck("no-JS: CTA visible and correct", pg.evaluate("(()=>{const a=document.querySelector('[data-pg=cta]');return a.getAttribute('href')==='mailto:milansingla15@gmail.com'&&getComputedStyle(a).opacity==='1'})()"))
-    ck("no-JS: github + linkedin links present", pg.evaluate("[...document.querySelectorAll('#contact .pg-links a')].length")==3)
+    ck("no-JS: email, CV (view + download), github + linkedin links present", pg.evaluate("[...document.querySelectorAll('#contact .pg-links a')].length")==5)
     ck("no-JS: terminal inputs disabled, not broken", pg.evaluate("document.querySelector('#pg-term-input').disabled"))
     ctx.close()
     # ───────── reduced motion ─────────

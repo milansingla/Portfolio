@@ -82,6 +82,7 @@ export class Rig {
   private hopTl: gsap.core.Timeline | null = null;
   private blinkTl: gsap.core.Timeline | null = null;
   private crouchTl: gsap.core.Timeline | null = null;
+  private descending = false;
 
   constructor(readonly root: HTMLElement) {
     this.svg = root.querySelector<SVGSVGElement>('[data-part="svg"]')!;
@@ -356,8 +357,28 @@ export class Rig {
     return gsap.to(this.s, { legL: 12, legR: -12, duration: speed, ease: "sine.inOut", yoyo: true, repeat: -1, onUpdate: this.touch });
   }
 
+  /**
+   * The same stepping, for a figure travelling straight down a vertical road
+   * (narrow screens): longer alternating steps with a small vertical bob, so
+   * the movement reads as going down, not as walking sideways.
+   */
+  descend(speed = 0.2) {
+    this.descending = true;
+    this.s.legL = -16;
+    this.s.legR = 16;
+    return gsap
+      .timeline({ repeat: -1 })
+      .to(this.s, { legL: 16, legR: -16, by: -4, duration: speed, ease: "sine.inOut", onUpdate: this.touch })
+      .to(this.s, { legL: -16, legR: 16, by: 0, duration: speed, ease: "sine.inOut", onUpdate: this.touch });
+  }
+
   stopWalk() {
-    gsap.to(this.s, { legL: 0, legR: 0, duration: 0.15, onUpdate: this.touch, overwrite: "auto" });
+    const to: gsap.TweenVars = { legL: 0, legR: 0, duration: 0.15, onUpdate: this.touch, overwrite: "auto" };
+    if (this.descending) {
+      to.by = 0;
+      this.descending = false;
+    }
+    gsap.to(this.s, to);
   }
 
   // ---------- geometry helpers ----------

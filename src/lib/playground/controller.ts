@@ -4,6 +4,7 @@ import { stick } from "../stickman/poses";
 import { mover } from "./../stickman/mover";
 import { INCIDENT } from "./data";
 import { createPad } from "./pad";
+import { sfx } from "../sound/sfx";
 
 /**
  * Part 04 controller: the three toys and the final act.
@@ -151,6 +152,9 @@ export function createPlayground(host: HTMLElement, reduced: boolean): Playgroun
           rig.to({ pop: 0, duration: 0.2 });
           rig.gaze(0, 0);
           rig.mood("grin", 0.15);
+          // a little hop on the third stroke and then every sixth
+          const n = pen.count();
+          if (n === 3 || (n > 3 && n % 6 === 0)) later(() => rig.hop(6), 450);
           later(() => rig.mood("smile", 0.25), 900);
         }, 1100);
       },
@@ -234,7 +238,31 @@ export function createPlayground(host: HTMLElement, reduced: boolean): Playgroun
     });
     cleanups.push(() => window.clearTimeout(confirmTimer));
 
+    // Running a terminal command makes the stickman look over and concentrate for a moment.
+    let thinkT = 0;
+    const onTerminal = () => {
+      if (reduced || busy) return;
+      const card = q("#terminal");
+      if (card) {
+        const r = card.getBoundingClientRect();
+        rig.gazeAt(r.left + r.width / 2, r.top + r.height / 2);
+      }
+      rig.mood("focus", 0.2);
+      window.clearTimeout(thinkT);
+      thinkT = later(() => {
+        if (busy) return;
+        rig.mood("smile", 0.25);
+        rig.gaze(0, 0);
+      }, 1500);
+    };
+    window.addEventListener("le:terminal", onTerminal);
+    cleanups.push(() => {
+      window.removeEventListener("le:terminal", onTerminal);
+      window.clearTimeout(thinkT);
+    });
+
     on(hi, "click", () => {
+      sfx.play("chime");
       if (!reduced) {
         face(false);
         rig.mood("grin", 0.15);

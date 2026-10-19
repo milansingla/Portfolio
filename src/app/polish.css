@@ -1,0 +1,253 @@
+/* ───────── Premium details: one motion language for every control ─────────
+   Small lifts, shifting arrows, drawn underlines, a clear press and one focus ring.
+   Loaded last so it refines the earlier styles without replacing them. */
+
+/* one focus ring for every control (the earlier ink ring stays for plain text links) */
+.p-link:focus-visible,
+.pg-btn:focus-visible,
+.pg-tool:focus-visible,
+.pg-chip:focus-visible,
+.pg-copy:focus-visible,
+.pg-cta:focus-visible,
+.skip:focus-visible,
+.j-back:focus-visible,
+.p-end-link:focus-visible,
+.pg-links a:focus-visible,
+.pg-footer a:focus-visible {
+  outline: 2px solid var(--blue, #1f3dff);
+  outline-offset: 3px;
+}
+
+/* ── pill buttons: lift on hover, settle on press ── */
+.p-link,
+.pg-btn,
+.pg-tool,
+.pg-copy {
+  transition:
+    background-color 0.28s,
+    color 0.28s,
+    border-color 0.28s,
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+@media (hover: hover) {
+  .p-link:hover,
+  .pg-btn:hover:not(:disabled),
+  .pg-tool:hover:not(:disabled):not([aria-disabled="true"]),
+  .pg-copy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 rgba(20, 17, 15, 0.14);
+  }
+}
+.p-link:active,
+.pg-btn:active:not(:disabled),
+.pg-tool:active:not(:disabled):not([aria-disabled="true"]),
+.pg-copy:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+  transition-duration: 0.08s;
+}
+
+/* arrows travel a few pixels */
+.p-ext {
+  transition: transform 0.3s var(--ease-out);
+}
+.p-link:hover .p-ext,
+.p-link:focus-visible .p-ext {
+  transform: translate(2px, -2px);
+}
+.p-end-link span {
+  display: inline-block;
+  transition: transform 0.35s var(--ease-out);
+}
+.p-end-link:hover span,
+.p-end-link:focus-visible span {
+  transform: translateY(3px);
+}
+
+/* ── text links: an underline that draws in from the left ── */
+.p-end-link,
+.pg-links a,
+.pg-footer a,
+.j-back {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 9px);
+  background-size: 0% 1px;
+  transition:
+    background-size 0.4s var(--ease-out),
+    color 0.25s;
+}
+.p-end-link:hover,
+.pg-links a:hover,
+.pg-footer a:hover,
+.j-back:hover,
+.p-end-link:focus-visible,
+.pg-links a:focus-visible,
+.pg-footer a:focus-visible,
+.j-back:focus-visible {
+  background-size: 100% 1px;
+}
+.pg-footer a {
+  border-bottom: 0;
+}
+.skip {
+  transition: background-size 0.3s var(--ease-out);
+}
+.skip:hover,
+.skip:focus-visible {
+  background-size: 100% 2px;
+}
+
+/* ── project screenshot frames: the shadow steps out, the picture breathes in ── */
+.p-screen {
+  transition: box-shadow 0.45s var(--ease-out), border-color 0.3s;
+}
+.p-screen img {
+  transition: transform 0.9s var(--ease-out);
+}
+@media (hover: hover) {
+  .p-screen:hover {
+    box-shadow: 11px 14px 0 rgba(20, 17, 15, 0.13);
+    border-color: var(--blue, #1f3dff);
+  }
+  .p-screen:hover .p-bar {
+    border-bottom-color: var(--blue, #1f3dff);
+  }
+  .p-screen:hover img {
+    transform: scale(1.018);
+  }
+}
+
+/* ── playground cards: a quiet lift ── */
+.pg-card {
+  transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
+}
+@media (hover: hover) {
+  .pg-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 34px -22px rgba(20, 17, 15, 0.45);
+  }
+}
+
+/* ── the colour swatches and brush slider feel the same as everything else ── */
+.pg-swatch input:checked + span {
+  transform: scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-link,
+  .pg-btn,
+  .pg-tool,
+  .pg-copy,
+  .p-ext,
+  .p-end-link span,
+  .p-screen,
+  .p-screen img,
+  .pg-card {
+    transition-duration: 0.01ms !important;
+  }
+  .p-link:hover,
+  .pg-btn:hover,
+  .pg-tool:hover,
+  .pg-copy:hover,
+  .p-link:hover .p-ext,
+  .p-end-link:hover span,
+  .p-screen:hover img,
+  .pg-card:hover {
+    transform: none !important;
+  }
+}
+
+/* ───────── MS monogram (components/Monogram.tsx) ───────── */
+.ms {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-left: -4px;
+  padding: 0 4px;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.ms svg {
+  display: block;
+  width: 42px;
+  height: 40px;
+  overflow: visible;
+}
+.ms path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0; /* the finished mark is the default */
+  transition: transform 0.35s var(--ease-out);
+}
+.ms path.ms-s {
+  stroke-width: 4; /* drawn inside a 0.8 scale: 3.2 on screen, matching the M */
+}
+.ms path.ms-halo {
+  stroke: var(--paper);
+  stroke-width: 7;
+}
+.ms-dot {
+  fill: var(--blue, #1f3dff);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform 0.35s var(--ease-out);
+}
+.ms:hover .ms-m,
+.ms:focus-visible .ms-m {
+  transform: translateY(-1px);
+}
+.ms:hover .ms-s,
+.ms:focus-visible .ms-s {
+  transform: translateY(1px);
+}
+.ms:hover .ms-dot,
+.ms:focus-visible .ms-dot {
+  transform: scale(1);
+}
+.ms:active svg {
+  transform: scale(0.96);
+}
+.ms:focus-visible {
+  outline: 2px solid var(--blue, #1f3dff);
+  outline-offset: 2px;
+}
+/* the reveal: first visit and on click; JS-enabled pages only */
+html.js .ms.is-replay .ms-m,
+html.js.intro .ms .ms-m {
+  animation: ms-draw 0.8s 0.5s cubic-bezier(0.65, 0, 0.35, 1) backwards;
+}
+html.js .ms.is-replay .ms-s,
+html.js.intro .ms .ms-s {
+  animation: ms-draw 0.7s 1.15s cubic-bezier(0.65, 0, 0.35, 1) backwards;
+}
+html.js .ms.is-replay .ms-m {
+  animation-delay: 0s;
+}
+html.js .ms.is-replay .ms-s {
+  animation-delay: 0.55s;
+}
+@keyframes ms-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ms path,
+  .ms-dot,
+  .ms svg {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

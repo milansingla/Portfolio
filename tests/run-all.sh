@@ -22,7 +22,7 @@ set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 export BASE_URL="${BASE_URL:-http://localhost:3111}"
 DIR="${E2E_DIR:-$HERE/e2e}"
-SUITES="${E2E_SUITES:-part1_flows part1_extra part2 journey_scroll journey_states part3 part4 a11y_cleanup_replay layout_perf lifecycle_perf}"
+SUITES="${E2E_SUITES:-part1_flows part1_extra part2 journey_scroll journey_states part3 part4 a11y_cleanup_replay layout_perf lifecycle_perf polish_sound branding_seo}"
 
 if [ "${E2E_NO_SERVER:-0}" != "1" ] && ! curl -fsS -m 10 -o /dev/null "$BASE_URL/" 2>/dev/null; then
   echo "NO SERVER at $BASE_URL. Start one first: npm run build && npx next start -p 3111" >&2

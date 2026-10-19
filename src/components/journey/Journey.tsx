@@ -1,3 +1,4 @@
+import Ambient from "../Ambient";
 import Stickman from "../Stickman";
 import { MILESTONES, JOURNEY_TITLE, JOURNEY_LEAD, DOOR_LABEL, type IllustrationId } from "@/lib/journey/data";
 import {
@@ -59,6 +60,7 @@ export default function Journey() {
       data-j="section"
       aria-labelledby="journey-title"
     >
+      <Ambient variant={1} />
       <header className="chrome j-chrome" data-open-reveal>
         <button type="button" className="j-back" data-el="back">
           <span aria-hidden="true">↑</span> Back to the sketch
