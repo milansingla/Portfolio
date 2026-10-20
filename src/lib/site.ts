@@ -23,18 +23,18 @@ function valid(u: string): boolean {
 
 export const SITE_URL: string | null = valid(raw) ? raw : null;
 
-/** Absolute URL of a path on the production site (null when no domain is configured). */
+/** Absolute, trailing-slash-consistent URL of a path on the production site (null when no domain is configured). */
 export const absUrl = (path: string): string | null => {
   if (!SITE_URL) return null;
-  return path === "/" ? SITE_URL : `${SITE_URL}${path.replace(/\/+$/, "")}`;
+  return path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path.replace(/\/+$/, "")}`;
 };
 
 export const PROFILE = {
   name: "Milan Singla",
   siteName: "The Little Engineer",
-  title: "Milan Singla | Full-Stack Developer & Software Engineer",
+  title: "Milan Singla — Full-Stack & Creative Developer",
   description:
-    "Milan Singla is a full-stack developer and software engineer building thoughtful web products with React, Next.js, TypeScript, Node.js, and modern APIs.",
+    "Portfolio of Milan Singla, a full-stack developer and B.Tech Computer Science student at Chitkara University. Software engineering projects including Shipyard, Termedu, VRxED Meet and VRxNuro, presented through The Little Engineer.",
   linkedin: "https://www.linkedin.com/in/milan-singla-146437215/",
   github: "https://github.com/milansingla",
 } as const;
@@ -79,7 +79,6 @@ export function jsonLdText(): string {
         "@type": "Person",
         ...(root ? { "@id": `${root}#person`, url: root } : {}),
         name: PROFILE.name,
-        jobTitle: "Full-Stack Developer and Software Engineer",
         description: "Full-stack developer and B.Tech Computer Science and Engineering student at Chitkara University.",
         sameAs: [PROFILE.linkedin, PROFILE.github],
       },

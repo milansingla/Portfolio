@@ -252,7 +252,12 @@ export default function Portfolio() {
         <Ambient variant={0} />
 
         <header className="chrome">
-          <Monogram />
+          <div className="chrome-left">
+            <Monogram />
+            <nav aria-label="Primary">
+              <a className="chrome-link" href="/blog">Blog</a>
+            </nav>
+          </div>
         </header>
 
         <div className="stage">

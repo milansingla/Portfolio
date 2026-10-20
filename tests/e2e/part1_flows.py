@@ -71,6 +71,8 @@ async def main():
         await pg.goto(URL+"?intro=skip",wait_until="load"); await pg.wait_for_timeout(800)
         await pg.keyboard.press("Tab"); f0=await pg.evaluate("document.activeElement.getAttribute('aria-label')")
         ok("keyboard: the first tab stop is the MS monogram home link", f0=="Milan Singla — Home", str(f0))
+        await pg.keyboard.press("Tab"); fb=await pg.evaluate("document.activeElement.textContent.trim()")
+        ok("keyboard: the second tab stop is the Blog link", fb=="Blog", str(fb))
         await pg.keyboard.press("Tab"); f1=await pg.evaluate("document.activeElement.textContent.trim()")
         await pg.keyboard.press("Tab"); f2=await pg.evaluate("document.activeElement.textContent.trim()")
         ok("keyboard: tab order primary → secondary", "EXPLORE" in f1 and "WHO" in f2, f"{f1} | {f2}")

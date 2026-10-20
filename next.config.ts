@@ -14,6 +14,8 @@ const allowedDevOrigins = (process.env.ALLOWED_DEV_ORIGINS ?? "")
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // lets the blog test build (fixture articles) live beside the real build without touching it
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   ...(allowedDevOrigins.length ? { allowedDevOrigins } : {}),
 };
 

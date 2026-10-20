@@ -1,9 +1,17 @@
 import type { MetadataRoute } from "next";
 import { absUrl } from "@/lib/site";
+import { getPosts } from "@/lib/blog/content";
 
-// The portfolio is one page (its four parts are sections of "/") plus the CV page: two real URLs.
-// Without a configured https production address the sitemap is empty rather than wrong.
+// Real URLs only: the portfolio ("/"), the CV, the journal index (once it has an article) and every
+// PUBLISHED article with its real date. Without a configured https production address it is empty
+// rather than wrong. Drafts never reach this list: getPosts() returns published articles only.
 export default function sitemap(): MetadataRoute.Sitemap {
-  const urls = [absUrl("/"), absUrl("/cv")].filter((u): u is string => !!u);
-  return urls.map((url) => ({ url }));
+  const posts = getPosts();
+  const entries: { url: string | null; lastModified?: string }[] = [
+    { url: absUrl("/") },
+    { url: absUrl("/cv") },
+    ...(posts.length ? [{ url: absUrl("/blog"), lastModified: posts[0].updatedAt ?? posts[0].publishedAt }] : []),
+    ...posts.map((p) => ({ url: absUrl(`/blog/${p.slug}`), lastModified: p.updatedAt ?? p.publishedAt })),
+  ];
+  return entries.filter((e): e is { url: string; lastModified?: string } => !!e.url).map((e) => ({ url: e.url, ...(e.lastModified ? { lastModified: e.lastModified } : {}) }));
 }

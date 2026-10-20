@@ -244,6 +244,13 @@ this repository.
   long the site has been live, links from other sites (LinkedIn, GitHub, your university and project pages should point here), and
   competing pages for the same name.
 
+## Engineering Journal (/blog)
+
+A file-based blog: Markdown in `content/blog/` is validated and rendered to static HTML at build time, with
+draft protection, per-article SEO, a sitemap extension and an RSS feed. It ships empty (no placeholder
+articles). Full guide, front-matter reference and publishing steps: [docs/blog.md](docs/blog.md); start from
+[docs/blog-article-template.md](docs/blog-article-template.md). Tests: `npm run test:unit`, `npm run test:blog`.
+
 ## Known limits
 
 - Audio was measured (node counts, envelope levels, rate limits) but never listened to; judge the sound by ear.
