@@ -66,7 +66,10 @@
 .bl-card-title a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size 0.3s var(--ease-out); }
 .bl-card-title a:hover { background-size: 100% 2px; }
 .bl-card-desc { margin: 0; max-width: 42rem; font: 400 1rem/1.55 var(--sans); color: var(--muted); }
-.bl-feed { margin: 24px 0 0; }
+.bl-feed { margin: 28px 0 0; padding-top: 18px; border-top: 1px solid rgba(20, 17, 15, 0.18); }
+.bl-feed-link { display: inline-flex; align-items: center; gap: 8px; }
+.bl-feed-icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.bl-feed p { margin: 6px 0 0 26px; max-width: 34rem; font: 400 0.875rem/1.5 var(--sans); color: var(--muted); }
 
 /* article */
 .bl-article { max-width: 44rem; margin: 0 auto; }

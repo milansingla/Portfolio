@@ -58,9 +58,15 @@ export default function BlogIndex() {
               <PostCard key={p.slug} post={p} />
             ))}
           </ol>
-          <p className="bl-feed">
-            <a href="/blog/feed.xml">RSS feed</a>
-          </p>
+          <aside className="bl-feed" aria-label="Subscribe to the Engineering Journal">
+            <a className="bl-feed-link" href="/blog/feed.xml">
+              <svg className="bl-feed-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 19h.01M5 12a7 7 0 0 1 7 7M5 5a14 14 0 0 1 14 14" />
+              </svg>
+              <span>RSS Feed ↗</span>
+            </a>
+            <p>Subscribe to new engineering articles using your preferred RSS reader.</p>
+          </aside>
         </>
       )}
     </main>

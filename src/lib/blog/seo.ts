@@ -13,7 +13,16 @@ export function blogIndexMeta(hasPosts: boolean): Metadata {
   const feed = absUrl("/blog/feed.xml");
   return {
     ...base,
-    alternates: { ...(base.alternates ?? {}), ...(feed ? { types: { "application/rss+xml": feed } } : {}) },
+    alternates: {
+      ...(base.alternates ?? {}),
+      ...(feed
+        ? {
+            types: {
+              "application/rss+xml": [{ url: feed, title: "Engineering Journal — Milan Singla" }],
+            },
+          }
+        : {}),
+    },
     // an empty page is not worth indexing; it becomes indexable the day the first article is published
     ...(hasPosts ? {} : { robots: { index: false, follow: true } }),
   };
