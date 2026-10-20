@@ -459,19 +459,6 @@ export function createSound() {
   });
   mo.observe(html, { attributes: true, attributeFilter: ["class"] });
   cleanups.push(() => mo.disconnect());
-  // pause everything while the tab is hidden
-  const onVis = () => {
-    if (el && !stopping) {
-      if (document.hidden) el.pause();
-      else void el.play().catch(() => {});
-    }
-    if (!ctx) return;
-    if (document.hidden) void ctx.suspend().catch(() => {});
-    else if (state.fx || state.music) void ctx.resume().catch(() => {});
-  };
-  document.addEventListener("visibilitychange", onVis);
-  cleanups.push(() => document.removeEventListener("visibilitychange", onVis));
-
   setSfx(play);
   return api;
 }
