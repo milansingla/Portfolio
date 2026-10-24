@@ -6,8 +6,6 @@ publishedAt: 2026-10-25
 author: Milan Singla
 tags: [software-engineering, full-stack-development, edtech, system-design]
 published: True
-coverImage: /projects/termedu/interface.webp
-coverAlt: "The Termedu student portal showing live classes and the meeting-link join flow."
 ---
 
 ## Why I built Termedu
@@ -25,10 +23,6 @@ The web platform is organised around the normal rhythm of a course. Students can
 The platform also extends beyond recorded content. Live classes are provided through Daily.co, and an AI-assisted entrance examination uses Google Gemini. Firebase Cloud Messaging provides push notifications, so important events do not have to wait for a student to reopen the website.
 
 The Android application is a companion rather than a separate learning product. Its package is `in.termedu.app`, and it presents the Termedu web platform in a native Android application written in Java. It adds mobile-specific integration points including deep links, course-material and assignment file transfers, and lock-screen media controls. Push notifications use Firebase Cloud Messaging, with UnifiedPush available as an alternative.
-
-![The Termedu student portal showing the Live page, course navigation, and the meeting-link join flow.](/projects/termedu/interface.webp)
-
-*The Termedu student portal, shown with a demo account.*
 
 ## Architecture: one platform, several clients
 
