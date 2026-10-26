@@ -9,7 +9,7 @@ export const BLOG_DESCRIPTION =
 const rfc3339 = (s: string) => (s.length === 10 ? `${s}T00:00:00Z` : s);
 
 export function blogIndexMeta(hasPosts: boolean): Metadata {
-  const base = pageMeta({ title: `${SITE_TITLE} — Milan Singla`, description: BLOG_DESCRIPTION, path: "/blog" });
+  const base = pageMeta({ title: { absolute: `${SITE_TITLE} — Milan Singla` }, description: BLOG_DESCRIPTION, path: "/blog" });
   const feed = absUrl("/blog/feed.xml");
   return {
     ...base,
