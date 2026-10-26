@@ -6,8 +6,6 @@ publishedAt: 2026-10-26
 author: Milan Singla
 tags: [software-engineering, real-time-systems, web-development, edtech, system-design]
 published: true
-coverImage: /projects/vrxed-meet/interface.webp
-coverAlt: "The VRxED Meet interface for joining a browser-based medical education meeting."
 ---
 
 ## Why I built VRxED Meet
@@ -31,10 +29,6 @@ The application is a React single-page application. Its visible product surface 
 - an end-meeting action for the host.
 
 The README also describes live translation in 50+ languages and identifies BioMistral as the model behind its medical translation and transcription. Those are product and project claims in the repository documentation. The compiled frontend confirms the translation and transcript experience, but it does not contain the model-serving implementation, training data, or a measurement of translation quality. I therefore do not present those details as independently verified backend behavior.
-
-![The VRxED Meet meeting interface.](/projects/vrxed-meet/interface.webp)
-
-*The meeting interface included with the portfolio project materials.*
 
 ## Architecture: a browser client at several service boundaries
 
