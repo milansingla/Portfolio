@@ -141,4 +141,3 @@ The answer is not to pretend AI is cheating by definition. It is not to give eve
 The next time a project looks remarkable, the useful question is no longer only, “What did you build?”
 
 It is: **“Show me what you would change, explain why it works, and tell me where it will fail.”**
-
