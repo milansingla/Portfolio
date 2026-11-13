@@ -5,7 +5,7 @@ description: "AI has made software easier to assemble and harder to evaluate. Wh
 publishedAt: 2026-11-13
 author: Milan Singla
 tags: [software-engineering, artificial-intelligence, developer-tools, technical-interviews, hackathons]
-published: false
+published: True
 ---
 
 There is a familiar hackathon scene now: a team opens its demo, the interface is polished, the API responds, the README is unusually complete, and the judges have five minutes to decide what they are looking at.
